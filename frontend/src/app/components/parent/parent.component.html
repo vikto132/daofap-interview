@@ -1,0 +1,42 @@
+<h2>Parent Table</h2>
+<ng-container *ngIf="dataSource$ | async; let source">
+  <table mat-table [dataSource]="source.data" class="mat-elevation-z8" aria-describedby="a">
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+  
+    <!-- Sender Column -->
+    <ng-container matColumnDef="sender">
+      <th mat-header-cell *matHeaderCellDef> Sender </th>
+      <td mat-cell *matCellDef="let element"> {{element.sender}} </td>
+    </ng-container>
+  
+    <!-- Receiver Column -->
+    <ng-container matColumnDef="receiver">
+      <th mat-header-cell *matHeaderCellDef>Receiver</th>
+      <td mat-cell *matCellDef="let element"> {{element.receiver}} </td>
+    </ng-container>
+  
+    <!-- Total Amount Column -->
+    <ng-container matColumnDef="totalAmount">
+      <th mat-header-cell *matHeaderCellDef> Total Amount </th>
+      <td mat-cell *matCellDef="let element"> {{element.totalAmount}} </td>
+    </ng-container>
+  
+    <!-- Total Paid Amount Column -->
+    <ng-container matColumnDef="totalPaidAmount">
+      <th mat-header-cell *matHeaderCellDef> Total Paid Amount </th>
+      <td mat-cell *matCellDef="let element">
+        <a [routerLink]="['/parent', element.id]">{{element.totalPaidAmount}}</a>
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <br>
+  <mat-paginator [length]="source.total" [pageSize]="(params | async)?.pageSize" [pageSizeOptions]="pageSizeOptions" aria-label="Select page" (page)="paginatorChange($event)">
+  </mat-paginator>
+</ng-container>

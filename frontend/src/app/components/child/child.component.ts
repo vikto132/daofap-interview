@@ -1,12 +1,12 @@
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 interface Child {
   id: number;
@@ -33,6 +33,15 @@ export class ChildComponent {
   httpClient = inject(HttpClient);
   activatedRoute = inject(ActivatedRoute)
   dataSource$ = this.activatedRoute.params.pipe(
-    switchMap(({ parentId }) => this.httpClient.get<Child[]>(`/api/child/${parentId}`)),
+    switchMap(({ parentId }) => this.httpClient.get<Child[]>(`/api/child/${parentId}`)
+      .pipe(map(response => ({
+        data: response,
+        error: null
+      })))
+    ),
+    catchError((err: HttpErrorResponse) => of({
+      data: null,
+      error: err.error.message
+    })),
   );
 }

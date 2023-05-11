@@ -7,7 +7,7 @@
   </div>
 </div>
 <ng-container *ngIf="dataSource$ | async; let source">
-  <table mat-table [dataSource]="source" class="mat-elevation-z8" aria-describedby="a">
+  <table mat-table [dataSource]="source.data" class="mat-elevation-z8" aria-describedby="a" *ngIf="source.data; else error">
     <!-- ID Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -43,4 +43,8 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <ng-template #error>
+    <h3 class="error-message">{{source.error}}</h3>
+  </ng-template>
+  
 </ng-container>

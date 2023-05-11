@@ -1,5 +1,6 @@
 package com.backend.controllers;
 
+import com.backend.dto.Page;
 import com.backend.dto.ParentDto;
 import com.backend.services.ParentService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class ParentController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ParentDto>> getParents(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "2") int pageSize) {
+    public ResponseEntity<Page<ParentDto>> getParents(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "2") int pageSize) {
         return new ResponseEntity<>(this.parentService.getParents(page, pageSize), HttpStatus.OK);
     }
 }

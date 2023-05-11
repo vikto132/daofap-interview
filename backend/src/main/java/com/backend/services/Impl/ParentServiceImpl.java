@@ -1,5 +1,6 @@
 package com.backend.services.Impl;
 
+import com.backend.dto.Page;
 import com.backend.dto.ParentDto;
 import com.backend.entities.Child;
 import com.backend.entities.Parent;
@@ -24,20 +25,27 @@ public class ParentServiceImpl implements ParentService {
 
     /**
      * get request parent page list then convert to ParentDto
-     * @param page page number
+     *
+     * @param page     page number
      * @param pageSize item per page
      * @return parent data transfer object
      */
     @Override
-    public List<ParentDto> getParents(int page, int pageSize) {
-        List<Parent> parents = this.parentRepository.getParents(page, pageSize);
-        Map<Long, Long> parentIdWithTotalPaidMapper = parents.stream()
+    public Page<ParentDto> getParents(int page, int pageSize) {
+        Page<Parent> parentPage = this.parentRepository.getParents(page, pageSize);
+        Map<Long, Long> parentIdWithTotalPaidMapper = parentPage.getData()
+                .stream()
                 .collect(Collectors.toMap(Parent::getId, x -> this.childRepository.getChildByParentId(x.getId())
                         .stream()
                         .mapToLong(Child::getPaidAmount)
                         .sum()));
-        return parents.stream()
+        List<ParentDto> parents = parentPage.getData()
+                .stream()
                 .map(x -> new ParentDto(x.getId(), x.getSender(), x.getReceiver(), x.getTotalAmount(), parentIdWithTotalPaidMapper.get(x.getId())))
                 .toList();
+        Page<ParentDto> parentDtoPage = new Page<>();
+        parentDtoPage.setData(parents);
+        parentDtoPage.setTotal(parentPage.getTotal());
+        return parentDtoPage;
     }
 }

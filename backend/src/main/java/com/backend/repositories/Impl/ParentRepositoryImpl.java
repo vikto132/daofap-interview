@@ -1,5 +1,6 @@
 package com.backend.repositories.Impl;
 
+import com.backend.dto.Page;
 import com.backend.dto.ResourceJson;
 import com.backend.entities.Parent;
 import com.backend.repositories.BaseRepository;
@@ -17,11 +18,17 @@ public class ParentRepositoryImpl extends BaseRepository<Parent> implements Pare
     }
 
     @Override
-    public List<Parent> getParents(int page, int pageSize) {
-        List<Parent> parents = this.getAllFromResources().stream().sorted((a,b) -> (int) (a.getId() - b.getId())).toList();
+    public Page<Parent> getParents(int page, int pageSize) {
+        List<Parent> parents = this.getAllFromResources()
+                .stream()
+                .sorted((a, b) -> (int) (a.getId() - b.getId()))
+                .toList();
         int fromIndex = (page - 1) * pageSize;
         int toIndex = Math.min(fromIndex + pageSize, parents.size());
-        return parents.subList(fromIndex, toIndex);
+        Page<Parent> parentPage = new Page<Parent>();
+        parentPage.setData(parents.subList(fromIndex, toIndex));
+        parentPage.setTotal(parents.size());
+        return parentPage;
     }
 
     @Override
